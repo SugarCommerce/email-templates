@@ -2,7 +2,7 @@
 /**
  * Escaping helpers.
  *
- * @package   SugarMill\EmailTemplates
+ * @package   Sugar\EmailTemplates
  * @copyright Copyright (c) 2026, ArrayPress Limited
  * @license   GPL-2.0-or-later
  * @since     1.0.0
@@ -10,7 +10,7 @@
 
 declare( strict_types=1 );
 
-namespace SugarMill\EmailTemplates;
+namespace Sugar\EmailTemplates;
 
 /**
  * Class Html

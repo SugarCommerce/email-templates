@@ -5,20 +5,20 @@
  * Not part of the package — a development tool for eyeballing output.
  * Run: php samples.php
  *
- * @package SugarMill\EmailTemplates
+ * @package Sugar\EmailTemplates
  */
 
 declare( strict_types=1 );
 
 require __DIR__ . '/vendor/autoload.php';
 
-use SugarMill\EmailTemplates\Branding;
-use SugarMill\EmailTemplates\Layout;
-use SugarMill\EmailTemplates\Renderer;
-use SugarMill\EmailTemplates\Theme;
-use SugarMill\EmailTemplates\Template;
+use Sugar\EmailTemplates\Branding;
+use Sugar\EmailTemplates\Layout;
+use Sugar\EmailTemplates\Renderer;
+use Sugar\EmailTemplates\Theme;
+use Sugar\EmailTemplates\Template;
 
-$out = getenv( 'HOME' ) . '/Desktop/sugarmill-email-samples';
+$out = getenv( 'HOME' ) . '/Desktop/sugarcommerce-email-samples';
 @mkdir( $out, 0755, true );
 
 $branding = new Branding(
@@ -363,7 +363,7 @@ $index = <<<HTML
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>sugarmill/email-templates — samples</title>
+<title>sugarcommerce/email-templates — samples</title>
 <style>
   :root { color-scheme: light dark; }
   body { margin:0; padding:32px; font:15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
@@ -383,7 +383,7 @@ $index = <<<HTML
 </style>
 </head>
 <body>
-<h1>sugarmill/email-templates</h1>
+<h1>sugarcommerce/email-templates</h1>
 <p class="lede">Every template below is rendered by the package from a subject line, a body
 containing tags, and a data array — nothing is hand-written HTML. Each has a plain-text
 version generated from the same source.</p>

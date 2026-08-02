@@ -2,7 +2,7 @@
 /**
  * A rendered message.
  *
- * @package   SugarMill\EmailTemplates
+ * @package   Sugar\EmailTemplates
  * @copyright Copyright (c) 2026, ArrayPress Limited
  * @license   GPL-2.0-or-later
  * @since     1.0.0
@@ -10,14 +10,14 @@
 
 declare( strict_types=1 );
 
-namespace SugarMill\EmailTemplates;
+namespace Sugar\EmailTemplates;
 
 /**
  * Class Rendered
  *
  * What comes out of the renderer: the three strings a transport needs.
  *
- * Hand it to `sugarmill/mailer` in three lines:
+ * Hand it to `sugarcommerce/mailer` in three lines:
  *
  *   Message::to( $customer )
  *       ->subject( $rendered->subject )

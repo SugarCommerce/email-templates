@@ -2,7 +2,7 @@
 /**
  * The built-in components.
  *
- * @package   SugarMill\EmailTemplates
+ * @package   Sugar\EmailTemplates
  * @copyright Copyright (c) 2026, ArrayPress Limited
  * @license   GPL-2.0-or-later
  * @since     1.0.0
@@ -10,23 +10,23 @@
 
 declare( strict_types=1 );
 
-namespace SugarMill\EmailTemplates\Tests;
+namespace Sugar\EmailTemplates\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use SugarMill\EmailTemplates\Branding;
-use SugarMill\EmailTemplates\Component;
-use SugarMill\EmailTemplates\Components\Button;
-use SugarMill\EmailTemplates\Components\CodeList;
-use SugarMill\EmailTemplates\Components\Details;
-use SugarMill\EmailTemplates\Components\Divider;
-use SugarMill\EmailTemplates\Components\LinkList;
-use SugarMill\EmailTemplates\Components\OrderItems;
-use SugarMill\EmailTemplates\Context;
-use SugarMill\EmailTemplates\Palette;
-use SugarMill\EmailTemplates\Style;
-use SugarMill\EmailTemplates\Theme;
+use Sugar\EmailTemplates\Branding;
+use Sugar\EmailTemplates\Component;
+use Sugar\EmailTemplates\Components\Button;
+use Sugar\EmailTemplates\Components\CodeList;
+use Sugar\EmailTemplates\Components\Details;
+use Sugar\EmailTemplates\Components\Divider;
+use Sugar\EmailTemplates\Components\LinkList;
+use Sugar\EmailTemplates\Components\OrderItems;
+use Sugar\EmailTemplates\Context;
+use Sugar\EmailTemplates\Palette;
+use Sugar\EmailTemplates\Style;
+use Sugar\EmailTemplates\Theme;
 
 #[CoversClass( OrderItems::class )]
 #[CoversClass( LinkList::class )]

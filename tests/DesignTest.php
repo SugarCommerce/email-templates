@@ -2,7 +2,7 @@
 /**
  * Branding, palette, theme and layout.
  *
- * @package   SugarMill\EmailTemplates
+ * @package   Sugar\EmailTemplates
  * @copyright Copyright (c) 2026, ArrayPress Limited
  * @license   GPL-2.0-or-later
  * @since     1.0.0
@@ -10,18 +10,18 @@
 
 declare( strict_types=1 );
 
-namespace SugarMill\EmailTemplates\Tests;
+namespace Sugar\EmailTemplates\Tests;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use SugarMill\EmailTemplates\Branding;
-use SugarMill\EmailTemplates\Layout;
-use SugarMill\EmailTemplates\Palette;
-use SugarMill\EmailTemplates\Renderer;
-use SugarMill\EmailTemplates\Template;
-use SugarMill\EmailTemplates\Theme;
+use Sugar\EmailTemplates\Branding;
+use Sugar\EmailTemplates\Layout;
+use Sugar\EmailTemplates\Palette;
+use Sugar\EmailTemplates\Renderer;
+use Sugar\EmailTemplates\Template;
+use Sugar\EmailTemplates\Theme;
 
 #[CoversClass( Branding::class )]
 #[CoversClass( Palette::class )]

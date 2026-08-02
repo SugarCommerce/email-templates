@@ -29,13 +29,13 @@ PHP 8.5+
 ## Installation
 
 ```bash
-composer require sugarmill/email-templates
+composer require sugarcommerce/email-templates
 ```
 
 ## Usage
 
 ```php
-use SugarMill\EmailTemplates\{Branding, Renderer, Template};
+use Sugar\EmailTemplates\{Branding, Renderer, Template};
 
 $renderer = new Renderer(
     new Branding(
@@ -67,7 +67,7 @@ $email->html;      // complete document, layout included
 $email->text;      // plain-text alternative
 ```
 
-Delivering it with [`sugarmill/mailer`](https://github.com/sugarmill/mailer) is three lines:
+Delivering it with [`sugarcommerce/mailer`](https://github.com/sugarcommerce/mailer) is three lines:
 
 ```php
 $mailer->send(
@@ -128,7 +128,7 @@ Layouts are table-based with inline styles because Outlook on Windows renders th
 Every value is yours to set:
 
 ```php
-use SugarMill\EmailTemplates\{Palette, Theme};
+use Sugar\EmailTemplates\{Palette, Theme};
 
 new Renderer( $branding, new Theme(
     font: "'Inter', -apple-system, sans-serif",
@@ -162,7 +162,7 @@ A component turns structured data into a block. That is the one thing an operato
 | `{{details}}` | `details` | Label/value summary |
 | `{{divider}}` | — | Hairline rule |
 
-Amounts are pre-formatted strings, not minor units, so the package needs no opinion about currency — format with [`sugarmill/currency`](https://github.com/sugarmill/currency) first.
+Amounts are pre-formatted strings, not minor units, so the package needs no opinion about currency — format with [`sugarcommerce/currency`](https://github.com/sugarcommerce/currency) first.
 
 `{{details}}` accepts a map or a list of pairs; the list form is what a loop produces and the only one that can repeat a label.
 
@@ -222,7 +222,7 @@ composer test
 php samples.php
 ```
 
-Writes ten realistic emails plus every layout to `~/Desktop/sugarmill-email-samples`, with an index page and the plain-text version of each.
+Writes ten realistic emails plus every layout to `~/Desktop/sugarcommerce-email-samples`, with an index page and the plain-text version of each.
 
 ## License
 
