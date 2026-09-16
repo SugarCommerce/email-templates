@@ -2,7 +2,7 @@
 /**
  * The rendering engine.
  *
- * @package   Sugar\EmailTemplates
+ * @package   SugarCommerce\EmailTemplates
  * @copyright Copyright (c) 2026, ArrayPress Limited
  * @license   GPL-2.0-or-later
  * @since     1.0.0
@@ -10,20 +10,20 @@
 
 declare( strict_types=1 );
 
-namespace Sugar\EmailTemplates\Tests;
+namespace SugarCommerce\EmailTemplates\Tests;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use Sugar\EmailTemplates\Branding;
-use Sugar\EmailTemplates\Context;
-use Sugar\EmailTemplates\Html;
-use Sugar\EmailTemplates\Layout;
-use Sugar\EmailTemplates\Rendered;
-use Sugar\EmailTemplates\Renderer;
-use Sugar\EmailTemplates\Template;
-use Sugar\EmailTemplates\Theme;
+use SugarCommerce\EmailTemplates\Branding;
+use SugarCommerce\EmailTemplates\Context;
+use SugarCommerce\EmailTemplates\Html;
+use SugarCommerce\EmailTemplates\Layout;
+use SugarCommerce\EmailTemplates\Rendered;
+use SugarCommerce\EmailTemplates\Renderer;
+use SugarCommerce\EmailTemplates\Template;
+use SugarCommerce\EmailTemplates\Theme;
 
 #[CoversClass( Renderer::class )]
 #[CoversClass( Template::class )]

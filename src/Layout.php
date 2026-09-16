@@ -2,7 +2,7 @@
 /**
  * The wrapper chrome around a message body.
  *
- * @package   Sugar\EmailTemplates
+ * @package   SugarCommerce\EmailTemplates
  * @copyright Copyright (c) 2026, ArrayPress Limited
  * @license   GPL-2.0-or-later
  * @since     1.0.0
@@ -10,7 +10,7 @@
 
 declare( strict_types=1 );
 
-namespace Sugar\EmailTemplates;
+namespace SugarCommerce\EmailTemplates;
 
 /**
  * Enum Layout

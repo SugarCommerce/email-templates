@@ -5,18 +5,18 @@
  * Not part of the package — a development tool for eyeballing output.
  * Run: php samples.php
  *
- * @package Sugar\EmailTemplates
+ * @package SugarCommerce\EmailTemplates
  */
 
 declare( strict_types=1 );
 
 require __DIR__ . '/vendor/autoload.php';
 
-use Sugar\EmailTemplates\Branding;
-use Sugar\EmailTemplates\Layout;
-use Sugar\EmailTemplates\Renderer;
-use Sugar\EmailTemplates\Theme;
-use Sugar\EmailTemplates\Template;
+use SugarCommerce\EmailTemplates\Branding;
+use SugarCommerce\EmailTemplates\Layout;
+use SugarCommerce\EmailTemplates\Renderer;
+use SugarCommerce\EmailTemplates\Theme;
+use SugarCommerce\EmailTemplates\Template;
 
 $out = getenv( 'HOME' ) . '/Desktop/sugarcommerce-email-samples';
 @mkdir( $out, 0755, true );

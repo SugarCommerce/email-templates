@@ -35,7 +35,7 @@ composer require sugarcommerce/email-templates
 ## Usage
 
 ```php
-use Sugar\EmailTemplates\{Branding, Renderer, Template};
+use SugarCommerce\EmailTemplates\{Branding, Renderer, Template};
 
 $renderer = new Renderer(
     new Branding(
@@ -128,7 +128,7 @@ Layouts are table-based with inline styles because Outlook on Windows renders th
 Every value is yours to set:
 
 ```php
-use Sugar\EmailTemplates\{Palette, Theme};
+use SugarCommerce\EmailTemplates\{Palette, Theme};
 
 new Renderer( $branding, new Theme(
     font: "'Inter', -apple-system, sans-serif",
