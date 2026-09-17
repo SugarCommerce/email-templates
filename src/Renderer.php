@@ -102,6 +102,43 @@ final class Renderer {
 	}
 
 	/**
+	 * Add or replace a component, written inline.
+	 *
+	 * The same thing as register(), without a class for a tag that only ever
+	 * has one implementation. For the tags an application needs that no
+	 * library could ship — a licence key block, a seat count, a renewal date
+	 * in the seller's own wording.
+	 *
+	 * ```php
+	 * $renderer->tag(
+	 *     'licence',
+	 *     fn( Context $c, Style $s ) => '<code>' . Html::escape( (string) $c->get( 'licence.key' ) ) . '</code>',
+	 *     fn( Context $c ) => (string) $c->get( 'licence.key' ),
+	 * );
+	 * ```
+	 *
+	 * The HTML closure owns its own escaping, exactly as a component class
+	 * does — whatever it returns is trusted and will not be escaped again.
+	 *
+	 * Both forms are required. A tag with no text form silently contributes
+	 * nothing to the plain-text body, which scores worse with spam filters
+	 * and reads as a hole in a text client.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string   $name Tag name, used as `{{name}}`.
+	 * @param callable $html Receives Context and Style, returns trusted HTML.
+	 * @param callable $text Receives Context, returns plain text.
+	 *
+	 * @return self
+	 *
+	 * @throws \InvalidArgumentException On a name the tag pattern cannot match.
+	 */
+	public function tag( string $name, callable $html, callable $text ): self {
+		return $this->register( $name, Components\Callback::of( $html, $text ) );
+	}
+
+	/**
 	 * Component names currently registered.
 	 *
 	 * @since 1.0.0

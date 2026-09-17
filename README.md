@@ -207,6 +207,67 @@ Everything a template renders arrived from somewhere else — a customer's name 
 - A logo URL must be absolute https.
 - Component output is trusted by design, which is why the contract puts escaping on the component.
 
+### Templates in files
+
+An email body is markup with a few tags in it. Kept in a PHP file it is a
+string literal nobody wants to edit and no editor highlights; kept in a file it
+is a file, and a designer can open it.
+
+```
+templates/emails/order.receipt.html
+```
+
+```
+---
+subject: Your order from {{business.name}}
+preheader: Thanks for your purchase.
+layout: ruled
+---
+<p>Thanks for your purchase.</p>
+{{order_items}}
+{{button}}
+```
+
+```php
+$template  = Template::from_file( 'templates/emails/order.receipt.html' );
+$templates = Template::from_directory( 'templates/emails' );   // keyed by slug
+```
+
+Front matter is optional, and it is deliberately not YAML — the whole grammar
+is `key: value` on one line, which needs no dependency and cannot surprise
+anyone. A real YAML parser would turn `subject: No` into a boolean.
+
+The file is read, never included. A template is content, not code; `include`
+would make every template an arbitrary-code hole the moment one became
+editable by an operator.
+
+### Tags of your own
+
+Built-in components cover the common blocks. For the ones no library could
+ship — a licence key, a seat count, a renewal date in your own wording —
+register a closure:
+
+```php
+$renderer->tag(
+    'licence',
+    fn( Context $c, Style $s ) => '<code style="color:' . $s->tokens()['{{muted}}'] . '">'
+        . Html::escape( (string) $c->get( 'licence.key' ) ) . '</code>',
+    fn( Context $c ) => (string) $c->get( 'licence.key' ),
+);
+```
+
+The HTML closure owns its own escaping, exactly as a component class does —
+whatever it returns is trusted and will not be escaped again. It receives the
+resolved `Style`, so a custom tag can track the layout rather than hardcoding a
+grey that turns into a white line on the inverted variant.
+
+Both forms are required. A tag with no text form silently contributes nothing
+to the plain-text body, which scores worse with spam filters and reads as a
+hole in a text client.
+
+Use `register()` with a `Component` class when the block is big enough to
+deserve one, or is shared between applications.
+
 ## Testing
 
 ```bash

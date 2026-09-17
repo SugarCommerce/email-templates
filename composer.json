@@ -1,6 +1,6 @@
 {
   "name": "sugarcommerce/email-templates",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Declarative transactional email rendering: layouts, operator-editable bodies, and typed components. Tags are escaped for the context they land in, and an unresolved tag never reaches a customer. Zero dependencies.",
   "type": "library",
   "license": "GPL-2.0-or-later",
