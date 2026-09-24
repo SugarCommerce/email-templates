@@ -76,6 +76,7 @@ final readonly class Callback implements Component {
 	 *
 	 * @return string
 	 */
+	#[\Override]
 	public function html( Context $context, Style $style ): string {
 		return (string) ( $this->html )( $context, $style );
 	}
@@ -89,6 +90,7 @@ final readonly class Callback implements Component {
 	 *
 	 * @return string
 	 */
+	#[\Override]
 	public function text( Context $context ): string {
 		return (string) ( $this->text )( $context );
 	}

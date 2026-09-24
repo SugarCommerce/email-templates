@@ -30,6 +30,7 @@ final readonly class LinkList implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function html( Context $context, Style $style ): string {
 		$rows = '';
 
@@ -67,6 +68,7 @@ final readonly class LinkList implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function text( Context $context ): string {
 		$lines = array();
 

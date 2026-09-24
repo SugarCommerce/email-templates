@@ -89,18 +89,11 @@ final readonly class Theme {
 	 * @return self
 	 */
 	public function with_palettes( ?Palette $light = null, ?Palette $inverted = null ): self {
-		return new self(
-			$this->font,
-			$this->mono_font,
-			$this->width,
-			$this->font_size,
-			$this->line_height,
-			$this->padding,
-			$this->radius,
-			$this->button_radius,
-			$this->small_size,
-			$light ?? $this->light,
-			$inverted ?? $this->inverted,
-		);
+		// A clone rather than every argument listed again: a field added to
+		// the constructor later cannot be forgotten here.
+		return clone( $this, array(
+			'light'    => $light ?? $this->light,
+			'inverted' => $inverted ?? $this->inverted,
+		) );
 	}
 }

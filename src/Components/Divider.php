@@ -29,6 +29,7 @@ final readonly class Divider implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function html( Context $context, Style $style ): string {
 		return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:20px 0;">'
 			. '<tr><td style="height:1px;background:' . $style->palette->border . ';line-height:1px;font-size:0;">&nbsp;</td></tr>'
@@ -38,6 +39,7 @@ final readonly class Divider implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function text( Context $context ): string {
 		return "\n" . str_repeat( '-', 40 ) . "\n";
 	}

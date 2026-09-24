@@ -174,7 +174,7 @@ final readonly class Template {
 	 * @return self
 	 */
 	public function with_layout( Layout $layout ): self {
-		return new self( $this->slug, $this->subject, $this->html, $this->text, $layout, $this->preheader );
+		return clone( $this, array( 'layout' => $layout ) );
 	}
 
 	/**

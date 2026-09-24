@@ -32,6 +32,7 @@ final readonly class OrderItems implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function html( Context $context, Style $style ): string {
 		$items = $context->list( 'items' );
 
@@ -84,6 +85,7 @@ final readonly class OrderItems implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function text( Context $context ): string {
 		$items = $context->list( 'items' );
 

@@ -35,6 +35,7 @@ final readonly class Button implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function html( Context $context, Style $style ): string {
 		$url = Html::url( (string) $context->get( 'button.url' ) );
 
@@ -55,6 +56,7 @@ final readonly class Button implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function text( Context $context ): string {
 		$url = (string) $context->get( 'button.url' );
 

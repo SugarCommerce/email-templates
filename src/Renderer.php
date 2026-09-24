@@ -43,7 +43,7 @@ final class Renderer {
 	 *
 	 * @since 1.0.0
 	 */
-	public const TAG_PATTERN = '/\{\{\s*([A-Za-z0-9_.\-]+)\s*\}\}/';
+	public const string TAG_PATTERN = '/\{\{\s*([A-Za-z0-9_.\-]+)\s*\}\}/';
 
 	/**
 	 * Components available to templates, keyed by tag name.

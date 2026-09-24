@@ -31,6 +31,7 @@ final readonly class CodeList implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function html( Context $context, Style $style ): string {
 		$blocks = '';
 
@@ -52,6 +53,7 @@ final readonly class CodeList implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function text( Context $context ): string {
 		$lines = array();
 

@@ -26,6 +26,7 @@ final readonly class FakeComponent implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function html( Context $context, Style $style ): string {
 		return '<b>LOUD</b>';
 	}
@@ -33,6 +34,7 @@ final readonly class FakeComponent implements Component {
 	/**
 	 * {@inheritDoc}
 	 */
+	#[\Override]
 	public function text( Context $context ): string {
 		return 'LOUD';
 	}
