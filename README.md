@@ -166,6 +166,20 @@ Amounts are pre-formatted strings, not minor units, so the package needs no opin
 
 `{{details}}` accepts a map or a list of pairs; the list form is what a loop produces and the only one that can repeat a label.
 
+Three more are built from values the application already holds at send time, and registered under whatever tag a body uses:
+
+| Class | Renders |
+|---|---|
+| `Paragraph( $text, aside: false )` | The sender's own words, line breaks kept. `aside: true` is small and muted, for the line under a button. Nothing at all when the text is empty, which `<p>{{note}}</p>` cannot do |
+| `Notice( $title, $message )` | An amber banner — "**Test mode.** Nothing was charged." The one fixed colour in the package: a warning is amber in every theme |
+| `ContactLine( $lead, $email, $url, $label, $or )` | "Questions? Acme can help — help@acme.test or their help page." Every word passed in, so a translation has no English left in it. Nothing when there is nowhere to send the reader |
+
+```php
+$renderer
+    ->register( 'note', new Paragraph( $seller_note ) )
+    ->register( 'support', new ContactLine( 'Questions? Acme can help', 'help@acme.test', 'https://acme.test/help', 'their help page' ) );
+```
+
 ### Writing one
 
 ```php
@@ -237,6 +251,29 @@ Front matter is optional, and it is deliberately not YAML — the whole grammar
 is `key: value` on one line, which needs no dependency and cannot surprise
 anyone. A real YAML parser would turn `subject: No` into a boolean.
 
+Translations are the same files in a folder named for the locale, so a
+translator works on whole emails rather than sentences cut out of them:
+
+```
+templates/emails/order.receipt.html      the source language
+templates/emails/de/order.receipt.html   German
+```
+
+```php
+Template::for_locale( 'templates/emails', 'de' );                    // only what German has
+Template::resolve( 'templates/emails', 'order.receipt', 'de-AT' );   // de-AT, then de, then English
+
+$renderer->render( $template, $data, lang: 'de' );                   // <html lang="de">
+$renderer->render( $template, $data, lang: 'ar', rtl: true );        // <html lang="ar" dir="rtl">
+```
+
+`for_locale()` has no fallback on purpose: an application that lets an operator
+edit the English needs to know a translation is missing before it chooses
+between the edit and the English that ships. A locale tag that is not one —
+`../`, a quote — finds nothing rather than a path. `render()` sends anything
+that is not a language tag as `en`; whether a language reads right to left is
+the caller's to say, since an application that translates already knows.
+
 The file is read, never included. A template is content, not code; `include`
 would make every template an arbitrary-code hole the moment one became
 editable by an operator.
@@ -275,7 +312,7 @@ composer install
 composer test
 ```
 
-122 tests, 291 assertions — escaping in each context, unresolved-tag handling, every layout rendering a complete document with no surviving token, each component in both modes, and an assertion that no component or layout hardcodes a colour.
+184 tests, 378 assertions — escaping in each context, templates per language and their fallback, the document's `lang` and `dir`, unresolved-tag handling, every layout rendering a complete document with no surviving token, each component in both modes, and an assertion that no component or layout hardcodes a colour.
 
 ## Samples
 

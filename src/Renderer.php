@@ -152,16 +152,28 @@ final class Renderer {
 	/**
 	 * Render a template against some data.
 	 *
+	 * The document says which language it is in. A screen reader reading a
+	 * German email with English pronunciation is the same failure as a web
+	 * page without `lang`, and a right-to-left language laid out left to
+	 * right reads as broken however good the translation. Whether a language
+	 * is right to left is the caller's to say — an application that
+	 * translates already knows, and this package keeps no language tables.
+	 *
 	 * @since 1.0.0
+	 * @since 1.3.0 The `$lang` and `$rtl` arguments.
 	 *
 	 * @param Template             $template Template.
 	 * @param array<string, mixed> $data     Values for its tags.
+	 * @param string               $lang     BCP 47 tag for `<html lang>`.
+	 *                                       Anything that is not one is
+	 *                                       sent as 'en'.
+	 * @param bool                 $rtl      Add `dir="rtl"` to the document.
 	 *
 	 * @return Rendered
 	 *
 	 * @throws \RuntimeException When strict and a tag has no value.
 	 */
-	public function render( Template $template, array $data = array() ): Rendered {
+	public function render( Template $template, array $data = array(), string $lang = 'en', bool $rtl = false ): Rendered {
 		$context    = new Context( $data );
 		$unresolved = array();
 		$style      = new Style(
@@ -194,7 +206,7 @@ final class Renderer {
 
 		return new Rendered(
 			$subject,
-			$this->wrap( $template->layout, $style, $body, $subject, $preheader ),
+			$this->wrap( $template->layout, $style, $body, $subject, $preheader, self::language( $lang ), $rtl ),
 			$this->text_document( $text ),
 			$unresolved
 		);
@@ -276,15 +288,19 @@ final class Renderer {
 	 * @param string $body      Rendered body HTML.
 	 * @param string $subject   Resolved subject, for the <title>.
 	 * @param string $preheader Inbox preview text.
+	 * @param string $lang      Language tag, already checked.
+	 * @param bool   $rtl       Whether the document reads right to left.
 	 *
 	 * @return string
 	 */
-	private function wrap( Layout $layout, Style $style, string $body, string $subject, string $preheader ): string {
+	private function wrap( Layout $layout, Style $style, string $body, string $subject, string $preheader, string $lang = 'en', bool $rtl = false ): string {
 		return strtr(
 			$layout->html(),
 			array_merge(
 				$style->tokens(),
 				array(
+					'{{lang}}'          => $lang,
+					'{{dir}}'           => $rtl ? ' dir="rtl"' : '',
 					'{{content}}'       => $body,
 					'{{business_name}}' => Html::escape( $this->branding->name ),
 					'{{footer}}'        => $this->footer_html(),
@@ -293,6 +309,26 @@ final class Renderer {
 				)
 			)
 		);
+	}
+
+	/**
+	 * A language tag safe to put in an attribute, or 'en'.
+	 *
+	 * The shape of a BCP 47 tag — a primary language and hyphenated
+	 * subtags — rather than an escaped copy of whatever arrived, so a value
+	 * from a cookie or a query string cannot carry anything else into the
+	 * document.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $lang Tag: `de`, `pt-BR` or `pt_BR`.
+	 *
+	 * @return string
+	 */
+	private static function language( string $lang ): string {
+		$lang = str_replace( '_', '-', trim( $lang ) );
+
+		return 1 === preg_match( '/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{1,8})*$/', $lang ) ? $lang : 'en';
 	}
 
 	/**
