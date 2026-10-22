@@ -70,39 +70,21 @@ final readonly class Details implements Component {
 	 *
 	 * @param Context $context Data.
 	 *
-	 * @return array<int, array{0: string, 1: string}>
+	 * @return list<array{0: string, 1: string}>
 	 */
 	private function pairs( Context $context ): array {
 		$pairs = array();
 
 		foreach ( $context->list( 'details' ) as $key => $value ) {
 			if ( is_array( $value ) ) {
-				$pairs[] = array( $this->text_of( $value[0] ?? '' ), $this->text_of( $value[1] ?? '' ) );
+				$pairs[] = array( Context::text( $value[0] ?? null ), Context::text( $value[1] ?? null ) );
 
 				continue;
 			}
 
-			$pairs[] = array( $this->text_of( $key ), $this->text_of( $value ) );
+			$pairs[] = array( Context::text( $key ), Context::text( $value ) );
 		}
 
 		return $pairs;
-	}
-
-	/**
-	 * Coerce a cell without tripping over an array.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed $value Raw cell.
-	 *
-	 * @return string
-	 */
-	private function text_of( mixed $value ): string {
-		return match ( true ) {
-			is_string( $value )           => $value,
-			is_scalar( $value )           => (string) $value,
-			$value instanceof \Stringable => (string) $value,
-			default                       => '',
-		};
 	}
 }

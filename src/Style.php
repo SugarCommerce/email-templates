@@ -24,6 +24,8 @@ namespace SugarCommerce\EmailTemplates;
 final readonly class Style {
 
 	/**
+	 * Hold the three parts of the design.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param Branding $branding Sender identity.

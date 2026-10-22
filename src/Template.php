@@ -28,6 +28,8 @@ namespace SugarCommerce\EmailTemplates;
 final readonly class Template {
 
 	/**
+	 * Hold a message's parts.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $slug      Stable identifier, e.g. `order.receipt`.
@@ -184,11 +186,17 @@ final readonly class Template {
 	 * @param string $extension File extension.
 	 *
 	 * @return self|null Null when not even the source language has it, or
-	 *                   when the slug is not a plain file name.
+	 *                   when the slug is not a plain file name or the
+	 *                   extension not a plain extension.
 	 */
 	public static function resolve( string $directory, string $slug, string $locale, string $source = 'en', string $extension = 'html' ): ?self {
 		// A slug is a file name, never a path: `../secrets` must not resolve.
-		if ( 1 !== preg_match( '/^[A-Za-z0-9_\-][A-Za-z0-9_.\-]*$/', $slug ) || str_contains( $slug, '..' ) ) {
+		if ( 1 !== preg_match( '/^[A-Za-z0-9_\-][A-Za-z0-9_.\-]*$/D', $slug ) || str_contains( $slug, '..' ) ) {
+			return null;
+		}
+
+		// Nor is the extension, which is joined to the slug the same way.
+		if ( 1 !== preg_match( '/^[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)*$/D', $extension ) ) {
 			return null;
 		}
 
@@ -230,7 +238,7 @@ final readonly class Template {
 	 * @return string|null
 	 */
 	private static function folder( string $directory, string $locale ): ?string {
-		if ( 1 !== preg_match( '/^[A-Za-z]{2,3}(?:[-_][A-Za-z0-9]{2,8})*$/', $locale ) ) {
+		if ( 1 !== preg_match( '/^[A-Za-z]{2,3}(?:[-_][A-Za-z0-9]{2,8})*$/D', $locale ) ) {
 			return null;
 		}
 
@@ -293,7 +301,7 @@ final readonly class Template {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string[] Unique tag names, in order of first appearance.
+	 * @return list<string> Unique tag names, in order of first appearance.
 	 */
 	public function tags(): array {
 		preg_match_all(
@@ -302,6 +310,6 @@ final readonly class Template {
 			$matches
 		);
 
-		return array_values( array_unique( $matches[1] ?? array() ) );
+		return array_values( array_unique( $matches[1] ) );
 	}
 }

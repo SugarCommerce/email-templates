@@ -23,6 +23,8 @@ namespace SugarCommerce\EmailTemplates;
 final readonly class Context {
 
 	/**
+	 * Wrap some data.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param array<string, mixed> $data Arbitrary nested data.
@@ -48,6 +50,29 @@ final readonly class Context {
 			is_int( $value ), is_float( $value ) => (string) $value,
 			$value instanceof \Stringable => (string) $value,
 			default                       => null,
+		};
+	}
+
+	/**
+	 * A value from inside a list entry, as text.
+	 *
+	 * For a component reading the fields of one entry from list() — a
+	 * line item's title, a link's label. Strings, numbers and Stringable
+	 * objects come back as text; anything else, an array included, as ''
+	 * rather than "Array" and a warning.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param mixed $value Raw value.
+	 *
+	 * @return string
+	 */
+	public static function text( mixed $value ): string {
+		return match ( true ) {
+			is_string( $value )           => $value,
+			is_scalar( $value )           => (string) $value,
+			$value instanceof \Stringable => (string) $value,
+			default                       => '',
 		};
 	}
 
@@ -81,7 +106,7 @@ final readonly class Context {
 	 *
 	 * @param string $path Dotted path.
 	 *
-	 * @return array<mixed> Empty when absent or not an array.
+	 * @return array<array-key, mixed> Empty when absent or not an array.
 	 */
 	public function list( string $path ): array {
 		$value = $this->raw( $path );

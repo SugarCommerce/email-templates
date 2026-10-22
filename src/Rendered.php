@@ -29,13 +29,15 @@ namespace SugarCommerce\EmailTemplates;
 final readonly class Rendered {
 
 	/**
+	 * Hold the three parts.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @param string   $subject   Resolved subject line.
-	 * @param string   $html      Full HTML document, layout included.
-	 * @param string   $text      Plain-text alternative.
-	 * @param string[] $unresolved Tags that had no value and were
-	 *                             removed. Empty on a clean render.
+	 * @param string       $subject    Resolved subject line, on one line.
+	 * @param string       $html       Full HTML document, layout included.
+	 * @param string       $text       Plain-text alternative.
+	 * @param list<string> $unresolved Tags that had no value and were
+	 *                                 removed. Empty on a clean render.
 	 */
 	public function __construct(
 		public string $subject,

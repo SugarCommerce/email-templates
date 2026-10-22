@@ -39,6 +39,8 @@ use SugarCommerce\EmailTemplates\{Component, Context, Html, Style};
 final readonly class Paragraph implements Component {
 
 	/**
+	 * Hold the words.
+	 *
 	 * @since 1.3.0
 	 *
 	 * @param string $text  Plain text. Escaped here; '' renders nothing.

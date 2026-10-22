@@ -49,6 +49,8 @@ final readonly class Notice implements Component {
 	public const string INK = '#78350f';
 
 	/**
+	 * Hold the warning.
+	 *
 	 * @since 1.3.0
 	 *
 	 * @param string $title   A few words in bold: "Test mode." May be ''.

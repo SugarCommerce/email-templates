@@ -27,7 +27,11 @@ namespace SugarCommerce\EmailTemplates;
 final readonly class Branding {
 
 	/**
+	 * Check and hold a sender identity.
+	 *
 	 * @since 1.0.0
+	 * @since 1.4.0 A logo URL with whitespace, a quote or an angle bracket
+	 *              is refused.
 	 *
 	 * @param string $name    Business name, shown in the header.
 	 * @param string $accent  Accent colour as `#rrggbb`.
@@ -37,7 +41,8 @@ final readonly class Branding {
 	 *                        commercial mail, and its absence is a
 	 *                        common reason for a spam classification.
 	 *
-	 * @throws \InvalidArgumentException On a malformed accent colour.
+	 * @throws \InvalidArgumentException On a malformed accent colour or logo
+	 *                                   URL.
 	 */
 	public function __construct(
 		public string $name,
@@ -49,13 +54,15 @@ final readonly class Branding {
 		// The accent is interpolated straight into a `style` attribute,
 		// so anything but a hex colour would be a stylesheet injection
 		// point — and one an operator could reach through a settings form.
-		if ( 1 !== preg_match( '/^#[0-9a-fA-F]{6}$/', $accent ) ) {
+		if ( 1 !== preg_match( '/^#[0-9a-fA-F]{6}$/D', $accent ) ) {
 			throw new \InvalidArgumentException( 'The accent must be a six-digit hex colour, e.g. #06d6a0.' );
 		}
 
-		if ( '' !== $logo_url && 1 !== preg_match( '#^https://#i', $logo_url ) ) {
-			// Mail clients block plain-http images, and a `javascript:`
-			// or `data:` URL in an <img src> is an attack surface.
+		// Mail clients block plain-http images, and a `javascript:` or
+		// `data:` URL in an <img src> is an attack surface. Whitespace,
+		// quotes and angle brackets are refused too: a URL never needs them
+		// unencoded, and any one of them is a way out of the attribute.
+		if ( '' !== $logo_url && 1 !== preg_match( '#^https://[^\s"\'<>`\\\\\x00-\x1F\x7F]+$#iD', $logo_url ) ) {
 			throw new \InvalidArgumentException( 'A logo URL must be absolute and https.' );
 		}
 	}

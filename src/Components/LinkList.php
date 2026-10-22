@@ -39,14 +39,14 @@ final readonly class LinkList implements Component {
 				continue;
 			}
 
-			$url = Html::url( (string) ( $link['url'] ?? '' ) );
+			$url = Html::url( Context::text( $link['url'] ?? null ) );
 
 			if ( '' === $url ) {
 				continue;
 			}
 
-			$label = Html::escape( (string) ( $link['label'] ?? $link['url'] ?? '' ) );
-			$note  = (string) ( $link['note'] ?? '' );
+			$label = Html::escape( Context::text( $link['label'] ?? $link['url'] ) );
+			$note  = Context::text( $link['note'] ?? null );
 
 			$suffix = '' !== $note
 				? ' <span style="color:' . $style->palette->muted . ';font-size:' . $style->theme->small_size . 'px;">' . Html::escape( $note ) . '</span>'
@@ -77,14 +77,14 @@ final readonly class LinkList implements Component {
 				continue;
 			}
 
-			$url = (string) ( $link['url'] ?? '' );
+			$url = Context::text( $link['url'] ?? null );
 
 			if ( '' === Html::url( $url ) ) {
 				continue;
 			}
 
-			$label   = (string) ( $link['label'] ?? $url );
-			$note    = (string) ( $link['note'] ?? '' );
+			$label   = Context::text( $link['label'] ?? $url );
+			$note    = Context::text( $link['note'] ?? null );
 			$lines[] = '- ' . $label . ( '' !== $note ? ' (' . $note . ')' : '' ) . "\n  " . $url;
 		}
 

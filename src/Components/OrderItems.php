@@ -47,10 +47,10 @@ final readonly class OrderItems implements Component {
 				continue;
 			}
 
-			$title    = Html::escape( (string) ( $item['title'] ?? '' ) );
-			$meta     = (string) ( $item['meta'] ?? '' );
-			$quantity = (string) ( $item['quantity'] ?? '' );
-			$total    = Html::escape( (string) ( $item['total'] ?? '' ) );
+			$title    = Html::escape( Context::text( $item['title'] ?? null ) );
+			$meta     = Context::text( $item['meta'] ?? null );
+			$quantity = Context::text( $item['quantity'] ?? null );
+			$total    = Html::escape( Context::text( $item['total'] ?? null ) );
 
 			if ( '' !== $meta ) {
 				$title .= '<br><span style="color:' . $style->palette->muted . ';font-size:' . $style->theme->small_size . 'px;">' . Html::escape( $meta ) . '</span>';
@@ -100,20 +100,21 @@ final readonly class OrderItems implements Component {
 				continue;
 			}
 
-			$line = '- ' . (string) ( $item['title'] ?? '' );
+			$line     = '- ' . Context::text( $item['title'] ?? null );
+			$meta     = Context::text( $item['meta'] ?? null );
+			$quantity = Context::text( $item['quantity'] ?? null );
+			$total    = Context::text( $item['total'] ?? null );
 
-			if ( '' !== (string) ( $item['meta'] ?? '' ) ) {
-				$line .= ' (' . $item['meta'] . ')';
+			if ( '' !== $meta ) {
+				$line .= ' (' . $meta . ')';
 			}
-
-			$quantity = (string) ( $item['quantity'] ?? '' );
 
 			if ( '' !== $quantity && '1' !== $quantity ) {
 				$line .= ' x' . $quantity;
 			}
 
-			if ( '' !== (string) ( $item['total'] ?? '' ) ) {
-				$line .= '  ' . $item['total'];
+			if ( '' !== $total ) {
+				$line .= '  ' . $total;
 			}
 
 			$lines[] = $line;

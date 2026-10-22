@@ -37,7 +37,12 @@ use SugarCommerce\EmailTemplates\{Component, Context, Html, Style};
 final readonly class ContactLine implements Component {
 
 	/**
+	 * Hold the words and the places to send the reader.
+	 *
 	 * @since 1.3.0
+	 * @since 1.4.0 An address that could change the `mailto:` link — one
+	 *              with a `?`, `#`, whitespace or a control character —
+	 *              is treated as ''.
 	 *
 	 * @param string $lead  The sentence before the links, without a full
 	 *                      stop: "Questions about this order? Acme can help".
@@ -67,8 +72,8 @@ final readonly class ContactLine implements Component {
 		$links = array();
 		$link  = 'style="color:' . $style->palette->muted . ';"';
 
-		if ( '' !== $this->email ) {
-			$links[] = '<a href="mailto:' . Html::escape( $this->email ) . '" ' . $link . '>' . Html::escape( $this->email ) . '</a>';
+		if ( '' !== $this->address() ) {
+			$links[] = '<a href="mailto:' . Html::escape( $this->address() ) . '" ' . $link . '>' . Html::escape( $this->address() ) . '</a>';
 		}
 
 		if ( '' !== Html::url( $this->url ) ) {
@@ -88,7 +93,7 @@ final readonly class ContactLine implements Component {
 			return '';
 		}
 
-		$where = array_filter( array( $this->email, '' !== Html::url( $this->url ) ? trim( $this->url ) : '' ) );
+		$where = array_filter( array( $this->address(), '' !== Html::url( $this->url ) ? trim( $this->url ) : '' ) );
 
 		return $this->lead . ': ' . implode( $this->or, $where );
 	}
@@ -101,6 +106,26 @@ final readonly class ContactLine implements Component {
 	 * @return bool
 	 */
 	private function reachable(): bool {
-		return '' !== $this->lead && ( '' !== $this->email || '' !== Html::url( $this->url ) );
+		return '' !== $this->lead && ( '' !== $this->address() || '' !== Html::url( $this->url ) );
+	}
+
+	/**
+	 * The address, or '' when it is not one a `mailto:` link can carry as is.
+	 *
+	 * A `?` starts the link's headers, so `help@acme.test?bcc=...&body=...`
+	 * would open the reader's mail client with a recipient and a message the
+	 * sender never wrote, and a `#` ends the address early. One `@`, with
+	 * something either side and nothing that ends or splits a URL. Quotes and
+	 * apostrophes are allowed — `o'brien@` is an address — and escaped where
+	 * the address is printed.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return string
+	 */
+	private function address(): string {
+		$email = trim( $this->email );
+
+		return 1 === preg_match( '/^[^\s@?#<>\\\\\x00-\x1F\x7F]+@[^\s@?#<>\\\\\x00-\x1F\x7F]+$/D', $email ) ? $email : '';
 	}
 }

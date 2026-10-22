@@ -46,16 +46,45 @@ final class Renderer {
 	public const string TAG_PATTERN = '/\{\{\s*([A-Za-z0-9_.\-]+)\s*\}\}/';
 
 	/**
+	 * Substitute for an HTML body: scalars escaped, components as HTML.
+	 *
+	 * @since 1.4.0
+	 */
+	private const int MODE_HTML = 0;
+
+	/**
+	 * Substitute for a subject or a hand-written text body: scalars raw,
+	 * components as text.
+	 *
+	 * @since 1.4.0
+	 */
+	private const int MODE_TEXT = 1;
+
+	/**
+	 * Substitute an HTML body that will become the text part: components as
+	 * text, and every value escaped so {@see Html::to_text()} hands it back
+	 * exactly — a customer called `<Bob>` must not be stripped as a tag.
+	 *
+	 * @since 1.4.0
+	 */
+	private const int MODE_DERIVED = 2;
+
+	/**
 	 * Components available to templates, keyed by tag name.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var array<string, Component>
 	 */
 	private array $components = array();
 
 	/**
+	 * Set up a renderer for one sender.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param Branding $branding      Sender identity.
+	 * @param Theme    $theme         Type, spacing, shape and palettes.
 	 * @param bool     $strict        Throw on an unresolved tag instead
 	 *                                of removing it. Good in tests and
 	 *                                in a template-save validator; risky
@@ -92,7 +121,7 @@ final class Renderer {
 	 * @throws \InvalidArgumentException On a name the tag pattern cannot match.
 	 */
 	public function register( string $name, Component $component ): self {
-		if ( 1 !== preg_match( '/^[A-Za-z0-9_.\-]+$/', $name ) ) {
+		if ( 1 !== preg_match( '/^[A-Za-z0-9_.\-]+$/D', $name ) ) {
 			throw new \InvalidArgumentException( 'A component name may only contain letters, digits, underscore, dot and hyphen: ' . $name );
 		}
 
@@ -143,7 +172,7 @@ final class Renderer {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string[]
+	 * @return list<string>
 	 */
 	public function components(): array {
 		return array_keys( $this->components );
@@ -159,8 +188,13 @@ final class Renderer {
 	 * is right to left is the caller's to say — an application that
 	 * translates already knows, and this package keeps no language tables.
 	 *
+	 * The subject comes back on one line whatever the data held. It ends up
+	 * in a mail header, and a customer name carrying a line break is the
+	 * classic way to write extra headers — a `Bcc:` — into a message.
+	 *
 	 * @since 1.0.0
 	 * @since 1.3.0 The `$lang` and `$rtl` arguments.
+	 * @since 1.4.0 The subject and preheader are always one line.
 	 *
 	 * @param Template             $template Template.
 	 * @param array<string, mixed> $data     Values for its tags.
@@ -182,8 +216,8 @@ final class Renderer {
 			$this->theme
 		);
 
-		$subject = $this->substitute( $template->subject, $context, false, $unresolved, $style );
-		$body    = $this->substitute( $template->html, $context, true, $unresolved, $style );
+		$subject = self::single_line( $this->substitute( $template->subject, $context, self::MODE_TEXT, $unresolved, $style ) );
+		$body    = $this->substitute( $template->html, $context, self::MODE_HTML, $unresolved, $style );
 
 		// With no hand-written text body, render the *body template* again
 		// in text mode rather than converting the finished HTML. That way
@@ -191,10 +225,10 @@ final class Renderer {
 		// instead of table cells mashed together — and only the operator's
 		// surrounding markup needs stripping.
 		$text = '' !== $template->text
-			? $this->substitute( $template->text, $context, false, $unresolved, $style )
-			: Html::to_text( $this->substitute( $template->html, $context, false, $unresolved, $style ) );
+			? $this->substitute( $template->text, $context, self::MODE_TEXT, $unresolved, $style )
+			: Html::to_text( $this->substitute( $template->html, $context, self::MODE_DERIVED, $unresolved, $style ) );
 
-		$preheader = $this->substitute( $template->preheader, $context, false, $unresolved, $style );
+		$preheader = self::single_line( $this->substitute( $template->preheader, $context, self::MODE_TEXT, $unresolved, $style ) );
 
 		$unresolved = array_values( array_unique( $unresolved ) );
 
@@ -215,16 +249,22 @@ final class Renderer {
 	/**
 	 * Replace every tag in a string.
 	 *
-	 * @since 1.0.0
+	 * One pass: a value that itself contains `{{tag}}` text is inserted as
+	 * that text and never expanded, so a customer cannot pull another
+	 * customer's data, or a component, into their own message.
 	 *
-	 * @param string   $subject    Raw string.
-	 * @param Context  $context    Data.
-	 * @param bool     $html       Whether the output is HTML.
-	 * @param string[] $unresolved Collects tags with no value.
+	 * @since 1.0.0
+	 * @since 1.4.0 Takes a mode rather than a bool.
+	 *
+	 * @param string       $subject    Raw string.
+	 * @param Context      $context    Data.
+	 * @param int          $mode       One of the MODE_ constants.
+	 * @param list<string> $unresolved Collects tags with no value.
+	 * @param Style        $style      Design tokens and component style.
 	 *
 	 * @return string
 	 */
-	private function substitute( string $subject, Context $context, bool $html, array &$unresolved, Style $style ): string {
+	private function substitute( string $subject, Context $context, int $mode, array &$unresolved, Style $style ): string {
 		if ( '' === $subject ) {
 			return '';
 		}
@@ -233,16 +273,20 @@ final class Renderer {
 
 		return (string) preg_replace_callback(
 			self::TAG_PATTERN,
-			function ( array $match ) use ( $context, $html, &$found, $style ): string {
+			function ( array $match ) use ( $context, $mode, &$found, $style ): string {
 				$name = $match[1];
 
 				// A component owns its own escaping — see Component.
 				if ( isset( $this->components[ $name ] ) ) {
-					if ( $html ) {
+					if ( self::MODE_HTML === $mode ) {
 						return $this->components[ $name ]->html( $context, $style );
 					}
 
 					$rendered = $this->components[ $name ]->text( $context );
+
+					if ( self::MODE_DERIVED === $mode ) {
+						$rendered = Html::escape( $rendered );
+					}
 
 					// Two components written side by side in a body have
 					// nothing between them, so their text runs together:
@@ -273,7 +317,7 @@ final class Renderer {
 					return '';
 				}
 
-				return $html ? Html::escape( $value ) : $value;
+				return self::MODE_TEXT === $mode ? $value : Html::escape( $value );
 			},
 			$subject
 		);
@@ -285,6 +329,7 @@ final class Renderer {
 	 * @since 1.0.0
 	 *
 	 * @param Layout $layout    Layout.
+	 * @param Style  $style     Design tokens for the layout.
 	 * @param string $body      Rendered body HTML.
 	 * @param string $subject   Resolved subject, for the <title>.
 	 * @param string $preheader Inbox preview text.
@@ -312,6 +357,29 @@ final class Renderer {
 	}
 
 	/**
+	 * A string with every line break and control character turned to a
+	 * space, and runs of spaces collapsed.
+	 *
+	 * For the subject — which a transport writes into a header, where a
+	 * carriage return or line feed starts a new header — and for the
+	 * preheader, which an inbox shows on one line anyway. Unicode line and
+	 * paragraph separators go too: a lenient parser downstream may treat
+	 * them as line ends.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param string $value Substituted subject or preheader.
+	 *
+	 * @return string
+	 */
+	private static function single_line( string $value ): string {
+		$value = preg_replace( '/[\x00-\x1F\x7F]/', ' ', $value ) ?? '';
+		$value = preg_replace( '/[\x{0085}\x{2028}\x{2029}]/u', ' ', $value ) ?? $value;
+
+		return trim( preg_replace( '/ {2,}/', ' ', $value ) ?? $value );
+	}
+
+	/**
 	 * A language tag safe to put in an attribute, or 'en'.
 	 *
 	 * The shape of a BCP 47 tag — a primary language and hyphenated
@@ -328,7 +396,7 @@ final class Renderer {
 	private static function language( string $lang ): string {
 		$lang = str_replace( '_', '-', trim( $lang ) );
 
-		return 1 === preg_match( '/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{1,8})*$/', $lang ) ? $lang : 'en';
+		return 1 === preg_match( '/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{1,8})*$/D', $lang ) ? $lang : 'en';
 	}
 
 	/**

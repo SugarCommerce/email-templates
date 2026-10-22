@@ -75,7 +75,7 @@ final readonly class CodeList implements Component {
 	 *
 	 * @param Context $context Data.
 	 *
-	 * @return array<int, array{0: string, 1: string}>
+	 * @return list<array{0: string, 1: string}>
 	 */
 	private function entries( Context $context ): array {
 		$entries = array();
@@ -87,8 +87,14 @@ final readonly class CodeList implements Component {
 				continue;
 			}
 
-			if ( is_array( $entry ) && '' !== (string) ( $entry['code'] ?? '' ) ) {
-				$entries[] = array( (string) ( $entry['label'] ?? '' ), (string) $entry['code'] );
+			if ( ! is_array( $entry ) ) {
+				continue;
+			}
+
+			$code = Context::text( $entry['code'] ?? null );
+
+			if ( '' !== $code ) {
+				$entries[] = array( Context::text( $entry['label'] ?? null ), $code );
 			}
 		}
 

@@ -42,6 +42,10 @@ use SugarCommerce\EmailTemplates\{Component, Context, Style};
 final readonly class Callback implements Component {
 
 	/**
+	 * Hold the two closures.
+	 *
+	 * @since 1.1.0
+	 *
 	 * @param \Closure $html Receives the Context and the Style, returns
 	 *                       trusted HTML. '' renders nothing.
 	 * @param \Closure $text Receives the Context, returns plain text. ''
@@ -78,7 +82,7 @@ final readonly class Callback implements Component {
 	 */
 	#[\Override]
 	public function html( Context $context, Style $style ): string {
-		return (string) ( $this->html )( $context, $style );
+		return Context::text( ( $this->html )( $context, $style ) );
 	}
 
 	/**
@@ -92,6 +96,6 @@ final readonly class Callback implements Component {
 	 */
 	#[\Override]
 	public function text( Context $context ): string {
-		return (string) ( $this->text )( $context );
+		return Context::text( ( $this->text )( $context ) );
 	}
 }

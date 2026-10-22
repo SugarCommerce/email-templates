@@ -216,10 +216,15 @@ Always implement `text()`. A message with no text alternative scores worse with 
 Everything a template renders arrived from somewhere else — a customer's name from a checkout form, a product title from an admin screen. See [SECURITY.md](SECURITY.md). In short:
 
 - Scalar tags are HTML-escaped in the body and left raw in the subject and text part.
-- `javascript:`, `data:` and `vbscript:` URLs are dropped from links and buttons, not rendered inert.
-- The accent must be a six-digit hex colour — it lands in a `style` attribute an operator can reach through a settings form.
-- A logo URL must be absolute https.
+- Substitution is one pass: a value that contains `{{tag}}` text is printed as that text, never expanded.
+- The subject and preheader always come back on one line. Line breaks and control characters in the data become spaces, so a customer name cannot write a `Bcc:` header into the message.
+- A derived text part prints values exactly as given — a customer called `<Bob>` is not stripped as a tag, and markup in the data cannot add a link to it.
+- `javascript:`, `data:` and `vbscript:` URLs are dropped from links and buttons, not rendered inert. A contact address that would add headers to its `mailto:` link (`?bcc=`) is not linked.
+- Every design value lands in a `style` attribute unescaped, so each is checked where it is made, and a bad one throws: the accent must be a six-digit hex colour; palette colours must be hex, `rgb()`/`hsl()` or a keyword; font stacks may hold family names, single quotes, commas and hyphens only; a line height is a number with an optional unit; no dimension is negative.
+- A logo URL must be absolute https, with no whitespace, quotes or angle brackets.
+- `Template::resolve()` takes a slug and extension that are file names, never paths, and a locale that is a locale.
 - Component output is trusted by design, which is why the contract puts escaping on the component.
+- The template body itself is trusted markup. Let operators edit it only if they are trusted with the HTML of every email you send.
 
 ### Templates in files
 

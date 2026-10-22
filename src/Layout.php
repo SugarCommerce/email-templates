@@ -34,12 +34,47 @@ namespace SugarCommerce\EmailTemplates;
  */
 enum Layout: string {
 
-	case Card             = 'card';
-	case CardInverted     = 'card-inverted';
-	case Plain            = 'plain';
-	case PlainInverted    = 'plain-inverted';
-	case Ruled            = 'ruled';
-	case RuledInverted    = 'ruled-inverted';
+	/**
+	 * A bordered card on a tinted page.
+	 *
+	 * @since 1.0.0
+	 */
+	case Card = 'card';
+
+	/**
+	 * The card, dark.
+	 *
+	 * @since 1.0.0
+	 */
+	case CardInverted = 'card-inverted';
+
+	/**
+	 * Text on the page, no container.
+	 *
+	 * @since 1.0.0
+	 */
+	case Plain = 'plain';
+
+	/**
+	 * Plain, dark.
+	 *
+	 * @since 1.0.0
+	 */
+	case PlainInverted = 'plain-inverted';
+
+	/**
+	 * Hairline rules instead of a border, for documents.
+	 *
+	 * @since 1.0.0
+	 */
+	case Ruled = 'ruled';
+
+	/**
+	 * Ruled, dark.
+	 *
+	 * @since 1.0.0
+	 */
+	case RuledInverted = 'ruled-inverted';
 
 	/**
 	 * Whether this is a dark variant.

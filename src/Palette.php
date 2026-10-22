@@ -30,7 +30,23 @@ namespace SugarCommerce\EmailTemplates;
 final readonly class Palette {
 
 	/**
+	 * What a colour may look like.
+	 *
+	 * Hex in any of its four lengths, a functional `rgb()`/`rgba()`/`hsl()`/
+	 * `hsla()` of numbers, or a bare keyword such as `transparent`. Every
+	 * colour is interpolated into a `style` attribute unescaped, so this is
+	 * the line between a colour and a stylesheet — or, with a quote in it,
+	 * new attributes and markup.
+	 *
+	 * @since 1.4.0
+	 */
+	public const string COLOUR_PATTERN = '/^(?:#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|(?:rgba?|hsla?)\([0-9.,%\/ ]+\)|[a-zA-Z]+)$/D';
+
+	/**
+	 * Build a palette from eight colours.
+	 *
 	 * @since 1.0.0
+	 * @since 1.4.0 Every colour is checked against COLOUR_PATTERN.
 	 *
 	 * @param string $text        Primary body text.
 	 * @param string $muted       Secondary text — meta, notes, footers.
@@ -41,6 +57,8 @@ final readonly class Palette {
 	 * @param string $accent      Brand accent, for links and buttons.
 	 * @param string $accent_text Readable text on top of the accent.
 	 * @param bool   $inverted    Whether this is the dark variant.
+	 *
+	 * @throws \InvalidArgumentException On a value that is not a colour.
 	 */
 	public function __construct(
 		public string $text,
@@ -52,7 +70,24 @@ final readonly class Palette {
 		public string $accent,
 		public string $accent_text,
 		public bool $inverted = false,
-	) {}
+	) {
+		$colours = array(
+			'text'        => $text,
+			'muted'       => $muted,
+			'border'      => $border,
+			'surface'     => $surface,
+			'card'        => $card,
+			'background'  => $background,
+			'accent'      => $accent,
+			'accent_text' => $accent_text,
+		);
+
+		foreach ( $colours as $name => $colour ) {
+			if ( 1 !== preg_match( self::COLOUR_PATTERN, $colour ) ) {
+				throw new \InvalidArgumentException( 'The ' . $name . ' colour must be a hex, rgb() or hsl() colour, or a colour keyword.' );
+			}
+		}
+	}
 
 	/**
 	 * A copy with some colours replaced.
@@ -73,6 +108,8 @@ final readonly class Palette {
 	 * @param string|null $accent_text Text on the accent.
 	 *
 	 * @return self
+	 *
+	 * @throws \InvalidArgumentException On a value that is not a colour.
 	 */
 	public function with(
 		?string $text = null,
